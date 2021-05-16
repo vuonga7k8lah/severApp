@@ -3,6 +3,7 @@
 namespace severApp\Controllers\Token;
 
 use severApp\Core\TrainJWT;
+use severApp\Database\DB;
 
 class HandleTokenController
 {
@@ -10,12 +11,13 @@ class HandleTokenController
 
     public function test()
     {
-        $token= $this->encodeJWT([
-            'username' => '1111',
-            'userId'   => '1111',
-            'Data'     => '1111'
+        $token = $this->encodeJWT([
+            'ID'       => '1',
+            'userName' => 'admin',
+            'HoTen'    => 'admin'
         ]);
         echo $token;
+        var_dump(DB::makeConnection()->query("SELECT * FROM users")->fetch_assoc());die();
         var_dump($this->decodeJWT($token));
     }
 }
