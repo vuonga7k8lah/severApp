@@ -20,7 +20,6 @@ class ProductController
                 'createDate' => $aItem[3]
             ];
         }
-        var_dump($coverData);die();
         echo json_encode($coverData);die();
     }
 }
