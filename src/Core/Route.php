@@ -28,7 +28,14 @@ class Route
     {
         self::$aRoute['POST'][$uri] = $controller;
     }
-
+    public static function put($uri, $controller)
+    {
+        self::$aRoute['PUT'][$uri] = $controller;
+    }
+    public static function delete($uri, $controller)
+    {
+        self::$aRoute['DELETE'][$uri] = $controller;
+    }
     public function direct($uri, $method)
     {
         if (!$controller = $this->routeIsExist($uri, $method)) {

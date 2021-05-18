@@ -5,6 +5,7 @@
     }
   },
   "require": {
-    "firebase/php-jwt": "^5.2"
+    "firebase/php-jwt": "^5.2",
+    "ext-mysql_xdevapi": "*"
   }
 }
