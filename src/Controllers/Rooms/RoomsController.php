@@ -5,7 +5,6 @@ namespace severApp\Controllers\Rooms;
 
 
 use severApp\Core\TrainJWT;
-use severApp\Helpers\FunctionCheck;
 use severApp\Helpers\Message;
 use severApp\Models\RoomsModel;
 
@@ -26,7 +25,7 @@ class RoomsController
                 'TuSua'     => $item[5],
             ];
         }
-        echo Message::success('list data', json_encode($aData));
+        echo Message::success('list data', $aData);
     }
 
     public function registerRooms()

@@ -23,7 +23,7 @@ class FloorsController
                 'TrangThai' => $item[3],
             ];
         }
-        echo Message::success('list data', json_encode($aData));
+        echo Message::success('list data', $aData);
     }
 
     public function registerFloors()
