@@ -15,7 +15,7 @@ trait TrainJWT
     {
         try {
             $oInfo = $this->decodeJWT($token);
-            return UserModel::isUserExist($oInfo->userName);
+            return UserModel::isUserAdmin($oInfo->userName);
         } catch (Exception $e) {
             echo 'Message: ' . $e->getMessage();
         }

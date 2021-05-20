@@ -45,3 +45,28 @@ $aRoute->post('createRooms', 'severApp\Controllers\Rooms\RoomsController@registe
 $aRoute->post('updateRooms', 'severApp\Controllers\Rooms\RoomsController@updateRooms');
 $aRoute->post('deleteRooms', 'severApp\Controllers\Rooms\RoomsController@deleteRooms');
 $aRoute->post('updateStatusRooms', 'severApp\Controllers\Rooms\RoomsController@updateStatusRooms');
+/** Quản Lý Tạo Dịch Vụ
+ * $aData {
+ * ID cần khi update và delete
+ * TenDV string
+ * Gia Giá
+ * TrangThai là dich vụ có còn hay không (có là 1 k là 0)
+ * }
+ */
+$aRoute->get('services', 'severApp\Controllers\Service\ServiceController@getAllServices');
+$aRoute->post('createServices', 'severApp\Controllers\Service\ServiceController@registerServices');
+$aRoute->post('updateServices', 'severApp\Controllers\Service\ServiceController@updateServices');
+$aRoute->post('deleteServices', 'severApp\Controllers\Service\ServiceController@deleteServices');
+/** Quản Lý Thanh Toán
+ * $aData {
+ * ID cần khi update và delete
+ * TenDV string
+ * Gia Giá
+ * TrangThai là dich vụ có còn hay không (có là 1 k là 0)
+ * }
+ */
+$aRoute->get('pays', 'severApp\Controllers\Pay\PayController@getAllPay');
+$aRoute->post('createPay', 'severApp\Controllers\Pay\PayController@registerPay');
+$aRoute->post('updatePay', 'severApp\Controllers\Pay\PayController@updatePay');
+$aRoute->post('deletePay', 'severApp\Controllers\Pay\PayController@deletePay');
+

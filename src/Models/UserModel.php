@@ -12,10 +12,16 @@ class UserModel
     {
         return !empty(self::getID($userName)) ? true : false;
     }
+    public static function isUserAdmin($userName)
+    {
+        $query=DB::makeConnection()->query("SELECT * FROM users WHERE userName='" . $userName . "' AND level=3 ")
+            ->fetch_assoc();
+        return !empty($query) ? true : false;
+    }
 
     public static function getID($userName)
     {
-        $ID = DB::makeConnection()->query("SELECT ID FROM users WHERE username='" . $userName . "'")->fetch_assoc();
+        $ID = DB::makeConnection()->query("SELECT ID FROM users WHERE userName='" . $userName . "'")->fetch_assoc();
         return (!empty($ID)) ? $ID['ID'] : 0;
     }
 
