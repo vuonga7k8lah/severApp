@@ -40,11 +40,20 @@ class RoomsModel
 
     public static function update($id, $aData)
     {
-        return DB::makeConnection()
-            ->query("UPDATE `Phong` SET `TenPhong`='" . $aData['TenPhong'] . "',`IDTang`='" . $aData['IDTang'] .
-                "',`Gia`='"
-                . $aData['Gia'] . "',`TrangThai`='" . $aData['TrangThai'] . "',`TuSua`='" . $aData['TuSua'] .
-                "' WHERE ID='" . $id . "'");
+        $query=[];
+        if ($aData['TenPhong']??''){
+            $query[]=" TenPhong ='".$aData['TenPhong']."'";
+        }
+        if ($aData['Gia']??''){
+            $query []=" IDTang ='".$aData['IDTang']."'";
+        }
+        if ($aData['TrangThai']??''){
+            $query []=" TrangThai = '".$aData['TrangThai']."'";
+        }
+        if ($aData['TuSua']??''){
+            $query []=" TuSua = '".$aData['TuSua']."'";
+        }
+        return DB::makeConnection()->query("UPDATE `Phong` SET ".implode(',',$query)." WHERE ID='" . $id . "'");
     }
 
     public static function updateStatusRoom($id, $aData)

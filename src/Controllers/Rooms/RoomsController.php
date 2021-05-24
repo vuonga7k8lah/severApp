@@ -32,13 +32,15 @@ class RoomsController
     {
         $aData = $_POST;
         if ($this->verifyToken($aData['token'])) {
-            if ($aData ?? '') {
+            if (checkValidateData($aData)) {
                 $status = RoomsModel::insert($aData);
                 if ($status) {
                     echo Message::success('Tạo Phòng Thành Công', []);
                     die();
                 }
                 echo Message::error('Tạo Phòng Không Thành Công', 401);
+            }else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
         }
         echo Message::error('User not access', 401);
@@ -48,13 +50,15 @@ class RoomsController
     {
         $aData = $_POST;
         if ($this->verifyToken($aData['token'])) {
-            if ($aData ?? '') {
+            if (checkValidateData($aData)) {
                 $status = RoomsModel::update($aData['ID'], $aData);
                 if ($status) {
                     echo Message::success('Update Phòng Thành Công', []);
                     die();
                 }
                 echo Message::error('Update Phòng Không Thành Công', 401);
+            }else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
         }
         echo Message::error('User not access', 401);
@@ -64,13 +68,15 @@ class RoomsController
     {
         $aData = $_POST;
         if ($this->verifyToken($aData['token'])) {
-            if ($aData ?? '') {
+            if (checkValidateData($aData)) {
                 $status = RoomsModel::delete($aData['ID']);
                 if ($status) {
                     echo Message::success('DELETE Phòng Thành Công', []);
                     die();
                 }
                 echo Message::error('DELETE Phòng Không Thành Công', 401);
+            }else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
         }
         echo Message::error('User not access', 401);

@@ -29,48 +29,55 @@ class FloorsController
     public function registerFloors()
     {
         $aData = $_POST;
-
-        if ($aData ?? '') {
-            if ($this->verifyToken($aData['token'])) {
+        if ($this->verifyToken($aData['token'])) {
+            if (checkValidateData($aData)) {
                 $status = FloorsModel::insert($aData);
                 if ($status) {
                     echo Message::success('Tạo Tầng Thành Công', []);
                     die();
                 }
                 echo Message::error('Tạo Tầng Không Thành Công', 401);
+            } else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
-            echo Message::error('User not access', 401);
         }
+        echo Message::error('User not access', 401);
+
 
     }
 
     public function updateFloors()
     {
         $aData = $_POST;
-        if ($aData ?? '') {
-            if ($this->verifyToken($aData['token'])) {
+        if ($this->verifyToken($aData['token'])) {
+            if (checkValidateData($aData)) {
                 $status = FloorsModel::update($aData['ID'], $aData);
                 if ($status) {
                     echo Message::success('Update Tầng Thành Công', []);
                     die();
                 }
                 echo Message::error('Update Tầng Không Thành Công', 401);
+            } else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
         }
         echo Message::error('User not access', 401);
     }
 
-    public function deleteFloors()
+    public
+    function deleteFloors()
     {
         $aData = $_POST;
-        if ($aData ?? '') {
-            if ($this->verifyToken($aData['token'])) {
+        if ($this->verifyToken($aData['token'])) {
+            if (checkValidateData($aData)) {
                 $status = FloorsModel::delete($aData['ID']);
                 if ($status) {
                     echo Message::success('Tầng xóa Thành Công', []);
                     die();
                 }
                 echo Message::error('Tầng xóa Không Thành Công', 401);
+            } else {
+                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
             }
         }
         echo Message::error('User not access', 401);

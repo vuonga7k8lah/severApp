@@ -16,6 +16,7 @@ $aRoute->get('users', 'severApp\Controllers\User\AccountController@getAllUser');
 $aRoute->post('createUsers', 'severApp\Controllers\User\AccountController@registerUser');
 $aRoute->post('updateUsers', 'severApp\Controllers\User\AccountController@updateUser');
 $aRoute->post('deleteUsers', 'severApp\Controllers\User\AccountController@deleteUser');
+$aRoute->post('login', 'severApp\Controllers\User\AccountController@handleLogin');
 /** Quản Lý Tạo Tầng
  * $aData {
  * ID cần khi update và delete

@@ -17,13 +17,17 @@ trait TrainJWT
             $oInfo = $this->decodeJWT($token);
             return UserModel::isUserAdmin($oInfo->userName);
         } catch (Exception $e) {
-            echo 'Message: ' . $e->getMessage();
+            var_dump('Message: ' . $e->getMessage());die();
         }
     }
 
     public function decodeJWT($token): object
     {
-        return JWT::decode($token, $this->key, ['HS256']);
+        try {
+            return JWT::decode($token, $this->key, ['HS256']);
+        }catch (Exception $e) {
+            var_dump('Message: ' . $e->getMessage());die();
+        }
     }
 
     /*
