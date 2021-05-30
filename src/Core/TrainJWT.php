@@ -11,10 +11,13 @@ trait TrainJWT
 {
     private $key = 'vuongdttn-1998';
 
-    public function verifyToken($token): bool
+    public function verifyToken($token,$checkUser=false): bool
     {
         try {
             $oInfo = $this->decodeJWT($token);
+            if ($checkUser){
+                return UserModel::isUserExist($oInfo->userName);
+            }
             return UserModel::isUserAdmin($oInfo->userName);
         } catch (Exception $e) {
             var_dump('Message: ' . $e->getMessage());die();

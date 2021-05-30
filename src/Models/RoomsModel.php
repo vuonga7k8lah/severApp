@@ -20,8 +20,8 @@ class RoomsModel
 
     public static function getRoom($id)
     {
-        $status=DB::makeConnection()->query("SELECT * FROM phong WHERE ID='".$id."'");
-         return (empty($status))?0:$status->fetch_assoc();
+        $status=DB::makeConnection()->query("SELECT * FROM Phong WHERE ID='".$id."'")->fetch_assoc();
+         return (empty($status))?0:$status;
     }
 
     public static function insert($aData)

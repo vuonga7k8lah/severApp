@@ -8,6 +8,17 @@ use severApp\Database\DB;
 
 class ServiceModel
 {
+    public static function isExist($id): bool
+    {
+        return !empty(self::getID($id));
+    }
+
+    public static function getID($id): int
+    {
+        $aID = DB::makeConnection()->query("SELECT ID FROM DichVu WHERE ID='" . $id . "'")->fetch_assoc();
+        return !empty($id) ? $aID['ID'] : 0;
+    }
+
     public static function getAll()
     {
         return DB::makeConnection()->query("SELECT * FROM DichVu")->fetch_all();
@@ -21,27 +32,35 @@ class ServiceModel
 
     public static function insert($aData)
     {
-        $sql="INSERT INTO `DichVu`(`ID`, `TenDV`, `Gia`, `TrangThai`) VALUES (null,'" . $aData['TenDV'] . "','" .
+        $sql = "INSERT INTO `DichVu`(`ID`, `TenDV`, `Gia`, `TrangThai`) VALUES (null,'" . $aData['TenDV'] . "','" .
             $aData['Gia'] . "','" . $aData['TrangThai'] . "')";
         return DB::makeConnection()->query($sql);
     }
 
     public static function update($aData)
     {
-        $query=[];
-        if ($aData['TenDV']??''){
-            $query[]=" TenDV ='".$aData['TenDV']."'";
+        $query = [];
+        if ($aData['TenDV'] ?? '') {
+            $query[] = " TenDV ='" . $aData['TenDV'] . "'";
         }
-        if ($aData['Gia']??''){
-            $query []=" Gia ='".$aData['Gia']."'";
+        if ($aData['Gia'] ?? '') {
+            $query [] = " Gia ='" . $aData['Gia'] . "'";
         }
-        if ($aData['TrangThai']??''){
-            $query []=" TrangThai = '".$aData['TrangThai']."'";
+        if ($aData['TrangThai'] ?? '') {
+            $query [] = " TrangThai = '" . $aData['TrangThai'] . "'";
         }
-        return DB::makeConnection()->query("UPDATE `DichVu` SET ".implode(',',$query)." WHERE ID='" . $aData['ID'] . "'");
+        return DB::makeConnection()->query("UPDATE `DichVu` SET " . implode(',', $query) . " WHERE ID='" .
+            $aData['ID'] . "'");
     }
+
     public static function delete($aData)
     {
-        return DB::makeConnection()->query("DELETE FROM `DichVu` WHERE ID='".$aData['ID']."'");
+        return DB::makeConnection()->query("DELETE FROM `DichVu` WHERE ID='" . $aData['ID'] . "'");
+    }
+
+    public static function getGiaWithID($id): int
+    {
+        $query = DB::makeConnection()->query("SELECT Gia FROM DichVu WHERE ID='" . $id . "'")->fetch_assoc();
+        return $query['Gia'];
     }
 }

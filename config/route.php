@@ -52,6 +52,7 @@ $aRoute->post('updateStatusRooms', 'severApp\Controllers\Rooms\RoomsController@u
  * TenDV string
  * Gia Giá
  * TrangThai là dich vụ có còn hay không (có là 1 k là 0)
+ * * token thêm sửa xóa phải bắn token lên
  * }
  */
 $aRoute->get('services', 'severApp\Controllers\Service\ServiceController@getAllServices');
@@ -61,9 +62,16 @@ $aRoute->post('deleteServices', 'severApp\Controllers\Service\ServiceController@
 /** Quản Lý Thanh Toán
  * $aData {
  * ID cần khi update và delete
- * TenDV string
- * Gia Giá
- * TrangThai là dich vụ có còn hay không (có là 1 k là 0)
+ * IDPhong int
+ * -------------------------
+ * Thong tin khach hang cần bắn lên:
+ * Ten họ tên của khách
+ * CMT số chứng minh thư
+ * SDT số điện thoại
+ * DiaChi địa chỉ khách
+ * ------------------
+ * DichVu bắn lên các ID của các Dịch Vụ dạng: 1,2,3
+ *  token thêm sửa xóa phải bắn token lên
  * }
  */
 $aRoute->get('pays', 'severApp\Controllers\Pay\PayController@getAllPay');
