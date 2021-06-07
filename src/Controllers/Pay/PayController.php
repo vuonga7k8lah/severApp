@@ -48,7 +48,7 @@ class PayController
     public function registerPay()
     {
         $aData = $_POST;
-        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'],true)) {
+        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
             if (checkValidateData($aData)) {
                 $aUserData = $this->decodeJWT($aData['token']);
                 $aData['IDUser'] = $aUserData->ID;
@@ -61,8 +61,8 @@ class PayController
                     'SDT'    => $aData['SDT'],
                     'DiaChi' => $aData['DiaChi']
                 ];
-                $aData['infoKhach']=json_encode($aInfoKhach);
-                $aData['ThanhToan']= (int) handlePays($aData['DichVu']) + (int) (RoomsModel::getRoom
+                $aData['infoKhach'] = json_encode($aInfoKhach);
+                $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
                     ($aData['IDPhong'])['Gia']);
                 $status = PayModel::insert($aData);
                 if ($status) {
@@ -81,16 +81,16 @@ class PayController
     public function deletePay()
     {
         $aData = $_POST;
-        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'],true)) {
+        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
             if (checkValidateData($aData)) {
-                if (PayModel::isExist($aData['ID'])){
+                if (PayModel::isExist($aData['ID'])) {
                     $status = PayModel::delete($aData['ID']);
                     if ($status) {
                         echo Message::success('Delete Hóa Đơn Thành Công', []);
                         die();
                     }
                     echo Message::error('Delete Hóa Đơn Không Thành Công', 401);
-                }else{
+                } else {
                     echo Message::error('Hóa Đơn Không Tồn Tại', 401);
                 }
             } else {
@@ -104,23 +104,23 @@ class PayController
     public function updatePay()
     {
         $aData = $_POST;
-        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'],true)) {
+        if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
             if (checkValidateData($aData)) {
-                if (PayModel::isExist($aData['ID'])){
+                if (PayModel::isExist($aData['ID'])) {
                     $aUserData = $this->decodeJWT($aData['token']);
                     $aData['IDUser'] = $aUserData->ID;
                     if (!checkIDPhong($aData['IDPhong'])) {
                         echo Message::error('Phòng không tồn tại', 401);
                     }
-                    $aData['ThanhToan']= (int) handlePays($aData['DichVu']) + (int) (RoomsModel::getRoom
+                    $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
                         ($aData['IDPhong'])['Gia']);
-                    $status = PayModel::update($aData['ID'],$aData);
+                    $status = PayModel::update($aData['ID'], $aData);
                     if ($status) {
                         echo Message::success('Update Hóa Đơn Thành Công', []);
                         die();
                     }
                     echo Message::error('Update Hóa Đơn Không Thành Công', 401);
-                }else{
+                } else {
                     echo Message::error('Hóa Đơn Không Tồn Tại', 401);
                 }
             } else {
@@ -129,5 +129,12 @@ class PayController
         } else {
             echo Message::error('User not access', 401);
         }
+    }
+
+    public function updateTablePay()
+    {
+        ///lấy giờ hiện tại
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
+        var_dump(date('m-d-Y h:i:s a', time()));
     }
 }

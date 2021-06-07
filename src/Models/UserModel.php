@@ -21,17 +21,16 @@ class UserModel
 
     public static function isUserAdmin($userName)
     {
-        $query = DB::makeConnection()->query("SELECT * FROM users WHERE userName='" . $userName . "' AND level=3 ")
+        $query = DB::makeConnection()->query("SELECT * FROM users WHERE userName='" . $userName . "' AND level=2 ")
             ->fetch_assoc();
         return !empty($query) ? true : false;
     }
 
     public static function insert($aData)
     {
-        $sql
-            = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`, `createDate`) VALUES (null,'" .
+        $sql = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`, `createDate`) VALUES (null,'" .
             $aData['HoTen'] . "','" . $aData['username'] . "','" . $aData['password'] . "','" . $aData['NgaySinh'] .
-            "','" . $aData['CMT'] . "','" . $aData['DiaChi'] . "',1,'',null)";
+            "'," . $aData['CMT'] . ",'" . $aData['DiaChi'] . "',1,'',null)";
         $insert = DB::makeConnection()
             ->query($sql);
         if ($insert) {

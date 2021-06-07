@@ -2,14 +2,18 @@
 /**
  * @var $aRoute severApp\Core\Route
  */
-$aRoute->get('token', 'severApp\Controllers\Token\HandleTokenController@test');
+$aRoute->post('permissions', 'severApp\Controllers\Token\HandleTokenController@verifyTokenRole');
 $aRoute->get('products', 'severApp\Controllers\Product\ProductController@getProducts');
 /** Quản Lý  User
  * $aData {
  * ID cần khi update và delete
- * TenTang string
- * SoPhong là số phòng cs trong tầng int
- * TrangThai trạng thái tầng đang hoạt động hay sửa
+ * username string là tên đăng nhập của user
+ * password là password của user
+ * HoTen là họ Tên Của User
+ * NgaySinh là ngày tên của user định dạng kiểu (1998-04-27)
+ * CMT là chứng minh thư
+ * DiaChi là địa chỉ của user
+ * level là quyền của tài khoản
  * }
  */
 $aRoute->get('users', 'severApp\Controllers\User\AccountController@getAllUser');

@@ -3,21 +3,20 @@
 namespace severApp\Controllers\Token;
 
 use severApp\Core\TrainJWT;
-use severApp\Database\DB;
+use severApp\Helpers\Message;
 
 class HandleTokenController
 {
     use TrainJWT;
 
-    public function test()
+    public function verifyTokenRole()
     {
-        $token = $this->encodeJWT([
-            'ID'       => '1',
-            'userName' => 'admin',
-            'HoTen'    => 'admin'
-        ]);
-        echo $token;
-        var_dump(DB::makeConnection()->query("SELECT * FROM users")->fetch_assoc());die();
-        var_dump($this->decodeJWT($token));
+        $token = $_POST['token'];
+        if (!empty($token)) {
+            $role = ($this->verifyToken($token)) ? 2 : 1;
+            echo Message::success("kiểm tra quyền của user thành công", ['role' => $role]);
+        } else {
+            echo Message::error('param token is required', 401);
+        }
     }
 }

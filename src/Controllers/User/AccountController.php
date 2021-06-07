@@ -29,13 +29,17 @@ class AccountController
     {
         $aData = $_POST;
         $aData['password'] = md5($_POST['password']);
+        if (!(strlen(trim($aData['CMT'])) <=11)){
+            echo Message::error('Số Chứng Minh Thư Phải dưới 11 số',401); die();
+        }
+        $aData['CMT'] = (int) $_POST['CMT'];
         if (!UserModel::isUserExist($aData['username'])) {
             if ($this->verifyToken($aData['token'])) {
                 $userID = UserModel::insert($aData);
                 if ($userID ?? '') {
                     $token = $this->encodeJWT([
                         'ID'       => $userID,
-                        'username' => $aData['username'],
+                        'userName' => $aData['username'],
                         'HoTen'    => $aData['HoTen']
                     ]);
                     UserModel::updateToken($userID, $token);
