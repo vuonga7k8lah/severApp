@@ -4,6 +4,7 @@
 namespace severApp\Controllers\Pay;
 
 
+use Exception;
 use severApp\Core\TrainJWT;
 use severApp\Helpers\Message;
 use severApp\Models\PayModel;
@@ -131,10 +132,36 @@ class PayController
         }
     }
 
-    public function updateTablePay()
+    public function checkoutPay()
     {
+        $aData=$_POST;
+        try{
+            if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
+                if (!isset($aData['ID']) || !PayModel::isExist($aData['ID'])){
+                    throw new Exception("ID Hóa Đơn Chưa Tồn Tại",401);
+                }
+                if (checkValidateData($aData)) {
+
+                    $aData['TongTien']=PayModel::getFields($aData['ID'],'ThanhToan');
+                    $aData['IDHoaDon']=$aData['ID'];
+                    $result=PayModel::insertThanhToan($aData);
+                    if ($result){
+                        echo Message::success("Thanh Toán Thành Công");die();
+                    }
+                    echo Message::error("Thanh Toán Không Thành Công",401);
+            }
+                else {
+                    echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                }
+            }
+            else {
+                echo Message::error('User not access', 401);
+            }
+        }catch (Exception $exception){
+            echo Message::error($exception->getMessage(),$exception->getCode());
+        }
         ///lấy giờ hiện tại
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        var_dump(date('m-d-Y h:i:s a', time()));
+//        date_default_timezone_set('Asia/Ho_Chi_Minh');
+//        var_dump(date('m-d-Y h:i:s a', time()));
     }
 }

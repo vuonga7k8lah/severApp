@@ -33,7 +33,7 @@ class PayModel
         return !empty($id) ? $ID->fetch_assoc() : 0;
     }
 
-    public static function update($id,$aData)
+    public static function update($id, $aData)
     {
         $query = [];
         if ($aData['IDUser'] ?? '') {
@@ -48,12 +48,25 @@ class PayModel
         if ($aData['DichVu'] ?? '') {
             $query [] = " DichVu = '" . $aData['DichVu'] . "'";
         }
-        $query=array_merge($query,[" createDate = null"]);
+        $query = array_merge($query, [" createDate = null"]);
         return DB::makeConnection()->query("UPDATE `HoaDon` SET " . implode(',', $query) . " WHERE ID='" . $id . "'");
     }
 
     public static function delete($id)
     {
-        return DB::makeConnection()->query("DELETE FROM HoaDon WHERE ID='".$id."'");
+        return DB::makeConnection()->query("DELETE FROM HoaDon WHERE ID='" . $id . "'");
+    }
+
+    public static function insertThanhToan($aData)
+    {
+        return DB::makeConnection()
+            ->query("INSERT INTO `ThanhToan`(`ID`, `IDHoaDon`, `TongTien`, `createDate`) VALUES (null ," .
+                $aData['IDHoaDon'] . "," . $aData['TongTien'] . ",null)");
+    }
+
+    public static function getFields($id,$field)
+    {
+        $query= DB::makeConnection()->query("SELECT ".$field." FROM HoaDon WHERE ID=".$id."");
+        return (!empty($query))?($query->fetch_assoc())[$field]:'';
     }
 }

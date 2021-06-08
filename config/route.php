@@ -63,7 +63,7 @@ $aRoute->get('services', 'severApp\Controllers\Service\ServiceController@getAllS
 $aRoute->post('createServices', 'severApp\Controllers\Service\ServiceController@registerServices');
 $aRoute->post('updateServices', 'severApp\Controllers\Service\ServiceController@updateServices');
 $aRoute->post('deleteServices', 'severApp\Controllers\Service\ServiceController@deleteServices');
-/** Quản Lý Thanh Toán
+/** Quản Lý Hóa Đơn
  * $aData {
  * ID cần khi update và delete
  * IDPhong int
@@ -82,4 +82,12 @@ $aRoute->get('pays', 'severApp\Controllers\Pay\PayController@getAllPay');
 $aRoute->post('createPay', 'severApp\Controllers\Pay\PayController@registerPay');
 $aRoute->post('updatePay', 'severApp\Controllers\Pay\PayController@updatePay');
 $aRoute->post('deletePay', 'severApp\Controllers\Pay\PayController@deletePay');
+/** Quản Lý Thanh Toán và Thống Kê
+ * $aData {
+ * ID Là ID của Hóa Đơn
+ * ------------------
+ *  token phải bắn token lên Để Check
+ * }
+ */
+$aRoute->post('checkoutPay', 'severApp\Controllers\Pay\PayController@checkoutPay');
 
