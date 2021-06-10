@@ -7,10 +7,10 @@ use severApp\Models\UserModel;
 function checkValidateData($aData)
 {
     foreach ($aData as $key => $data) {
-        if ($key === 'TuSua') {
+        if (($key === 'TuSua') || $key === 'TrangThai' ) {
             if ($data == 0 || $data == 1) {
                 $aSuccess[$key] = true;
-            } else {
+            }else {
                 $aError[$key] = true;
             }
         } else {
