@@ -45,7 +45,7 @@ class PayModel
         if ($aData['IDPhong'] ?? '') {
             $query [] = " IDPhong = '" . $aData['IDPhong'] . "'";
         }
-        if ($aData['DichVu'] ?? '') {
+        if (isset($aData['DichVu'])) {
             $query [] = " DichVu = '" . $aData['DichVu'] . "'";
         }
         $query = array_merge($query, [" createDate = null"]);

@@ -47,7 +47,7 @@ class RoomsModel
         if ($aData['Gia']??''){
             $query []=" IDTang ='".$aData['IDTang']."'";
         }
-        if ($aData['TrangThai']??''){
+        if (isset($aData['TrangThai']) && (($aData['TrangThai']=='0')||($aData['TrangThai']=='1'))){
             $query []=" TrangThai = '".$aData['TrangThai']."'";
         }
         if ($aData['TuSua']??''){

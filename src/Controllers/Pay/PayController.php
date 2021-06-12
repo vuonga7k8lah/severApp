@@ -26,12 +26,16 @@ class PayController
                 'SDT'    => $oInfo->SDT,
                 'DiaChi' => $oInfo->DiaChi
             ];
-            foreach (explode(',', $item[4]) as $ID) {
-                $aResponseDV = ServiceModel::getServiceWithID($ID);
-                $aDataDV[] = [
-                    'TenDV' => $aResponseDV['TenDV'],
-                    'Gia'   => $aResponseDV['Gia']
-                ];
+            if (!empty($item[4])){
+                foreach (explode(',', $item[4]) as $ID) {
+                    $aResponseDV = ServiceModel::getServiceWithID($ID);
+                    $aDataDV[] = [
+                        'TenDV' => $aResponseDV['TenDV'],
+                        'Gia'   => $aResponseDV['Gia']
+                    ];
+                }
+            }else{
+                $aDataDV = [];
             }
             $aData[] = [
                 'ID'         => $item[0],

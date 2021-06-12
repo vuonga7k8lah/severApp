@@ -46,11 +46,12 @@ class ServiceModel
         if ($aData['Gia'] ?? '') {
             $query [] = " Gia ='" . $aData['Gia'] . "'";
         }
-        if ($aData['TrangThai'] ?? '') {
+        if (isset($aData['TrangThai']) && (($aData['TrangThai']=='0')||($aData['TrangThai']=='1'))) {
             $query [] = " TrangThai = '" . $aData['TrangThai'] . "'";
         }
-        return DB::makeConnection()->query("UPDATE `DichVu` SET " . implode(',', $query) . " WHERE ID='" .
-            $aData['ID'] . "'");
+        $sql="UPDATE `DichVu` SET " . implode(',', $query) . " WHERE ID='" .
+            $aData['ID'] . "'";
+        return DB::makeConnection()->query($sql);
     }
 
     public static function delete($aData)
