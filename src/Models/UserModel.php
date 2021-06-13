@@ -67,8 +67,8 @@ class UserModel
         if ($aData['DiaChi'] ?? '') {
             $query [] = " DiaChi = '" . $aData['DiaChi'] . "'";
         }
-        if ($aData['level'] ?? '') {
-            $query [] = " level = '" . $aData['level'] . "'";
+        if ($aData['role'] ?? '') {
+            $query [] = " level = '" . $aData['role'] . "'";
         }
         return DB::makeConnection()->query("UPDATE `users` SET " . implode(',', $query) .
             ",`createDate`=null WHERE ID='" .

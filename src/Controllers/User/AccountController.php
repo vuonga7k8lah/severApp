@@ -20,6 +20,10 @@ class AccountController
                 'ID'       => $oUSer[0],
                 'HoTen'    => $oUSer[1],
                 'userName' => $oUSer[2],
+                'NgaySinh'    => $oUSer[4],
+                'CMT'    => $oUSer[5],
+                'DiaChi'    => $oUSer[6],
+                'role'    => $oUSer[7],
             ];
         }
         echo Message::success('List user', $aUser);
