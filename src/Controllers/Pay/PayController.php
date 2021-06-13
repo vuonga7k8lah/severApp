@@ -17,6 +17,7 @@ class PayController
 
     public function getAllPay()
     {
+        $aDataDV=[];
         $aResponse = PayModel::getAll();
         foreach ($aResponse as $item) {
             $oInfo = json_decode($item[3]);
@@ -27,8 +28,9 @@ class PayController
                 'DiaChi' => $oInfo->DiaChi
             ];
             if (!empty($item[4])){
-                foreach (explode(',', $item[4]) as $ID) {
-                    $aResponseDV = ServiceModel::getServiceWithID($ID);
+                $aDV=explode(',', $item[4]);
+                for($i=0;$i<count($aDV);$i++){
+                    $aResponseDV = ServiceModel::getServiceWithID($aDV[$i]);
                     $aDataDV[] = [
                         'TenDV' => $aResponseDV['TenDV'],
                         'Gia'   => $aResponseDV['Gia']
@@ -46,6 +48,7 @@ class PayController
                 'ThanhToan'  => $item[5],
                 'createDate' => $item[6],
             ];
+            $aDataDV=[];
         }
         echo Message::success('list data', $aData);
     }
