@@ -82,7 +82,7 @@ $aRoute->get('pays', 'severApp\Controllers\Pay\PayController@getAllPay');
 $aRoute->post('createPay', 'severApp\Controllers\Pay\PayController@registerPay');
 $aRoute->post('updatePay', 'severApp\Controllers\Pay\PayController@updatePay');
 $aRoute->post('deletePay', 'severApp\Controllers\Pay\PayController@deletePay');
-/** Quản Lý Thanh Toán và Thống Kê
+/** Quản Lý Thanh Toán
  * $aData {
  * ID Là ID của Hóa Đơn
  * ------------------
@@ -90,4 +90,14 @@ $aRoute->post('deletePay', 'severApp\Controllers\Pay\PayController@deletePay');
  * }
  */
 $aRoute->post('checkoutPay', 'severApp\Controllers\Pay\PayController@checkoutPay');
+/** Quản Lý Thống Kê
+ * $aData {
+ * filter Là mặc định là today
+ * các loại filter:today,yesterday,thisWeek,thisMonth,thisWeek,lastMonth
+ *
+ * ------------------
+ *  token phải bắn token lên Để Check phải là admin mới hiển thị
+ * }
+ */
+$aRoute->post('statisticPay', 'severApp\Controllers\Statistic\PaysStatisticController@handleStatisticPay');
 
