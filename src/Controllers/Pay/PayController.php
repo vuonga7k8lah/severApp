@@ -17,7 +17,7 @@ class PayController
 
     public function getAllPay()
     {
-        $aDataDV=[];
+        $aDataDV = [];
         $aResponse = PayModel::getAll();
         foreach ($aResponse as $item) {
             $oInfo = json_decode($item[3]);
@@ -27,16 +27,16 @@ class PayController
                 'SDT'    => $oInfo->SDT,
                 'DiaChi' => $oInfo->DiaChi
             ];
-            if (!empty($item[4])){
-                $aDV=explode(',', $item[4]);
-                for($i=0;$i<count($aDV);$i++){
+            if (!empty($item[4])) {
+                $aDV = explode(',', $item[4]);
+                for ($i = 0; $i < count($aDV); $i++) {
                     $aResponseDV = ServiceModel::getServiceWithID($aDV[$i]);
                     $aDataDV[] = [
                         'TenDV' => $aResponseDV['TenDV'],
                         'Gia'   => $aResponseDV['Gia']
                     ];
                 }
-            }else{
+            } else {
                 $aDataDV = [];
             }
             $aData[] = [
@@ -48,7 +48,7 @@ class PayController
                 'ThanhToan'  => $item[5],
                 'createDate' => $item[6],
             ];
-            $aDataDV=[];
+            $aDataDV = [];
         }
         echo Message::success('list data', $aData);
     }
@@ -74,6 +74,9 @@ class PayController
                     ($aData['IDPhong'])['Gia']);
                 $status = PayModel::insert($aData);
                 if ($status) {
+                    RoomsModel::update($aData['IDPhong'], [
+                        'TrangThai' => 1
+                    ]);
                     echo Message::success('Create Hóa Đơn Thành Công', []);
                     die();
                 }
@@ -141,31 +144,33 @@ class PayController
 
     public function checkoutPay()
     {
-        $aData=$_POST;
-        try{
+        $aData = $_POST;
+        try {
             if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
-                if (!isset($aData['ID']) || !PayModel::isExist($aData['ID'])){
-                    throw new Exception("ID Hóa Đơn Chưa Tồn Tại",401);
+                if (!isset($aData['ID']) || !PayModel::isExist($aData['ID'])) {
+                    throw new Exception("ID Hóa Đơn Chưa Tồn Tại", 401);
                 }
                 if (checkValidateData($aData)) {
-
-                    $aData['TongTien']=PayModel::getFields($aData['ID'],'ThanhToan');
-                    $aData['IDHoaDon']=$aData['ID'];
-                    $result=PayModel::insertThanhToan($aData);
-                    if ($result){
-                        echo Message::success("Thanh Toán Thành Công");die();
+                    $aData['TongTien'] = PayModel::getFields($aData['ID'], 'ThanhToan');
+                    $aData['IDPhong'] = PayModel::getFields($aData['ID'], 'IDPhong');
+                    $aData['IDHoaDon'] = $aData['ID'];
+                    $result = PayModel::insertThanhToan($aData);
+                    if ($result) {
+                        RoomsModel::update($aData['IDPhong'], [
+                            'TrangThai' => 0
+                        ]);
+                        echo Message::success("Thanh Toán Thành Công");
+                        die();
                     }
-                    echo Message::error("Thanh Toán Không Thành Công",401);
-            }
-                else {
+                    echo Message::error("Thanh Toán Không Thành Công", 401);
+                } else {
                     echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
                 }
-            }
-            else {
+            } else {
                 echo Message::error('User not access', 401);
             }
-        }catch (Exception $exception){
-            echo Message::error($exception->getMessage(),$exception->getCode());
+        } catch (Exception $exception) {
+            echo Message::error($exception->getMessage(), $exception->getCode());
         }
         ///lấy giờ hiện tại
 //        date_default_timezone_set('Asia/Ho_Chi_Minh');

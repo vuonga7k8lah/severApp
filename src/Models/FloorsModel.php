@@ -10,9 +10,11 @@ class FloorsModel
 {
     public static function insert($aData)
     {
-        return DB::makeConnection()
-            ->query("INSERT INTO `Tang`(`ID`, `TenTang`, `SoPhong`, `TrangThai`) VALUES (null,'" . $aData['TenTang'] .
-                "','" . $aData['TenTang'] . "',1)");
+        if(count(self::getAll()) <= 5){
+            return DB::makeConnection()
+                ->query("INSERT INTO `Tang`(`ID`, `TenTang`, `SoPhong`, `TrangThai`) VALUES (null,'" . $aData['TenTang'] .
+                    "','" . $aData['TenTang'] . "',1)");
+        }
     }
 
     public static function delete($id)
