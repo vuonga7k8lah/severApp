@@ -19,7 +19,7 @@ class UserModel
         return (!empty($ID)) ? $ID['ID'] : 0;
     }
 
-    public static function isUserAdmin($userName)
+    public static function isUserAdmin($userName):bool
     {
         $query = DB::makeConnection()->query("SELECT * FROM users WHERE userName='" . $userName . "' AND level=2 ")
             ->fetch_assoc();
@@ -28,7 +28,8 @@ class UserModel
 
     public static function insert($aData)
     {
-        $sql = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`, `createDate`) VALUES (null,'" .
+        $sql
+            = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`, `createDate`) VALUES (null,'" .
             $aData['HoTen'] . "','" . $aData['username'] . "','" . $aData['password'] . "','" . $aData['NgaySinh'] .
             "'," . $aData['CMT'] . ",'" . $aData['DiaChi'] . "',1,'',null)";
         $insert = DB::makeConnection()
@@ -82,16 +83,23 @@ class UserModel
 
     public static function handleLogin($aData)
     {
-        $sql="SELECT ID FROM users WHERE userName='" .
+        $sql = "SELECT ID FROM users WHERE userName='" .
             DB::makeConnection()->real_escape_string($aData['username']) . "' AND password='"
             . DB::makeConnection()->real_escape_string(md5($aData['password'])) . "'";
-        $status=DB::makeConnection()->query($sql);
-        return (!empty($status))?($status->fetch_assoc())['ID']:$status;
+        $status = DB::makeConnection()->query($sql);
+        return (!empty($status)) ? ($status->fetch_assoc())['ID'] : $status;
     }
 
     public static function getTokenWithUserID($userID): string
     {
         $data = DB::makeConnection()->query("SELECT token FROM users WHERE ID='" . $userID . "'")->fetch_assoc();
         return $data['token'];
+    }
+
+    public static function checkPasswordExist($userID,$password): bool
+    {
+        $query = DB::makeConnection()->query("SELECT ID FROM users WHERE ID='" . $userID . "' AND password='" . $password . "'")
+            ->fetch_assoc();
+        return !empty($query) ? true : false;
     }
 }
