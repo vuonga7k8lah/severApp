@@ -7,18 +7,29 @@ use severApp\Models\UserModel;
 function checkValidateData($aData)
 {
     foreach ($aData as $key => $data) {
-        if (($key === 'TuSua') || $key === 'TrangThai' ) {
+        switch ($key){
+            case 'TuSua':
+            case 'TrangThai':
             if ($data == 0 || $data == 1) {
                 $aSuccess[$key] = true;
             }else {
                 $aError[$key] = true;
             }
-        } else {
-            if (!empty($data)) {
-                $aSuccess[$key] = true;
-            } else {
-                $aError[$key] = true;
-            }
+            break;
+            case 'Option':
+                if ($data == 'TheoPhong' || $data == 'TheoGio') {
+                    $aSuccess[$key] = true;
+                }else {
+                    $aError[$key] = true;
+                }
+                break;
+            default:
+                if (!empty($data)) {
+                    $aSuccess[$key] = true;
+                } else {
+                    $aError[$key] = true;
+                }
+                break;
         }
     }
     if (isset($aError)) {

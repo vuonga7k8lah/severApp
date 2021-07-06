@@ -73,6 +73,7 @@ $aRoute->post('deleteServices', 'severApp\Controllers\Service\ServiceController@
  * $aData {
  * ID cần khi update và delete
  * IDPhong int
+ * Option (TheoPhong | TheoGio) TheoPhong là Thang Toán Theo Phòng,Còn Lại Là Thanh Toán Theo Giờ
  * -------------------------
  * Thong tin khach hang cần bắn lên:
  * Ten họ tên của khách

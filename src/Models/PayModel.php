@@ -16,8 +16,8 @@ class PayModel
     public static function insert($aData)
     {
         $sql
-            = "INSERT INTO `HoaDon`(`ID`, `IDPhong`, `IDUser`, `infoKhach`, `DichVu`, `ThanhToan`, `createDate`) VALUES (null,'" .
-            $aData['IDPhong'] . "','" . $aData['IDUser'] . "','" . $aData['infoKhach'] . "','" . $aData['DichVu'] .
+            = "INSERT INTO `HoaDon`(`ID`, `IDPhong`, `IDUser`, `infoKhach`, `Option`, `DichVu`, `ThanhToan`, `createDate`) VALUES (null,'" .
+            $aData['IDPhong'] . "','" . $aData['IDUser'] . "','" . $aData['infoKhach'] . "','" . $aData['Option'] . "','" . $aData['DichVu'] .
             "','" . $aData['ThanhToan'] . "',null)";
         return DB::makeConnection()->query($sql);
     }
