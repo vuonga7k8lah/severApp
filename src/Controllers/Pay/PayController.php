@@ -27,8 +27,8 @@ class PayController
                 'SDT'    => $oInfo->SDT,
                 'DiaChi' => $oInfo->DiaChi
             ];
-            if (!empty($item[4])) {
-                $aDV = explode(',', $item[4]);
+            if (!empty($item[5])) {
+                $aDV = explode(',', $item[5]);
                 for ($i = 0; $i < count($aDV); $i++) {
                     $aResponseDV = ServiceModel::getServiceWithID($aDV[$i]);
                     $aDataDV[] = [
@@ -45,8 +45,8 @@ class PayController
                 'IDUser'     => $item[2],
                 'InfoKhach'  => $aInfoKhach,
                 'DichVu'     => $aDataDV,
-                'ThanhToan'  => $item[5],
-                'createDate' => $item[6],
+                'ThanhToan'  => $item[6],
+                'createDate' => $item[7],
             ];
             $aDataDV = [];
         }
