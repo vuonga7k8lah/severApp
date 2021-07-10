@@ -4,6 +4,7 @@
 namespace severApp\Controllers\Pay;
 
 
+use DateTime;
 use Exception;
 use severApp\Core\TrainJWT;
 use severApp\Helpers\Message;
@@ -70,18 +71,18 @@ class PayController
                     'DiaChi' => $aData['DiaChi']
                 ];
                 $aData['infoKhach'] = json_encode($aInfoKhach);
-                if ($aData['Option']==='TheoPhong'){
+                if ($aData['Option'] === 'TheoPhong') {
                     $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
                         ($aData['IDPhong'])['Gia']);
-                }else{
+                } else {
                     $aData['ThanhToan'] = (int)handlePays($aData['DichVu']);
                 }
-                $status = PayModel::insert($aData);
-                if ($status) {
+                $ID = PayModel::insert($aData);
+                if ($ID) {
                     RoomsModel::update($aData['IDPhong'], [
                         'TrangThai' => 1
                     ]);
-                    echo Message::success('Create Hóa Đơn Thành Công', []);
+                    echo Message::success('Create Hóa Đơn Thành Công', ['ID' => $ID]);
                     die();
                 }
                 echo Message::error('Create Hóa Đơn Không Thành Công', 401);
@@ -155,19 +156,21 @@ class PayController
                     throw new Exception("ID Hóa Đơn Chưa Tồn Tại", 401);
                 }
                 if (checkValidateData($aData)) {
-                    $option=PayModel::getFields($aData['ID'], 'Option');
+                    $option = PayModel::getFields($aData['ID'], 'Option');
                     $aData['IDPhong'] = PayModel::getFields($aData['ID'], 'IDPhong');
                     $aData['IDHoaDon'] = $aData['ID'];
-                    if ($option==='TheoPhong'){
-                        $aData['TongTien']=(int) PayModel::getFields($aData['ID'], 'ThanhToan');
-                    }else{
+                    if ($option === 'TheoPhong') {
+                        $aData['TongTien'] = (int)PayModel::getFields($aData['ID'], 'ThanhToan');
+                    } else {
                         //set thời gian về múi giời HCM
                         date_default_timezone_set('Asia/Ho_Chi_Minh');
                         //set Giá của 1 giờ bằng tiền phòng 110% giá phòng
-                        $priceOneHouse=(int)(RoomsModel::getRoom($aData['IDPhong'])['Gia'])*1.1;
+                        $priceOneHouse = (int)(RoomsModel::getRoom($aData['IDPhong'])['Gia']) * 1.1;
                         //tính Giờ Thanh Đã ở bằng thời gian hiện tại trừ đi thời gian tạo hóa đơn
-                        $time = abs(ceil((strtotime(date_format((new \DateTime()),'Y-m-d H:i:s'))-strtotime(PayModel::getFields($aData['ID'], 'createDate')))/3600));
-                        $aData['TongTien']=(int)PayModel::getFields($aData['ID'], 'ThanhToan') + $priceOneHouse*$time;
+                        $time = abs(ceil((strtotime(date_format((new DateTime()), 'Y-m-d H:i:s')) -
+                                strtotime(PayModel::getFields($aData['ID'], 'createDate'))) / 3600));
+                        $aData['TongTien'] = (int)PayModel::getFields($aData['ID'], 'ThanhToan') +
+                            $priceOneHouse * $time;
 
                     }
                     $result = PayModel::insertThanhToan($aData);

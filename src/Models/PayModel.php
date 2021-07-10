@@ -15,11 +15,17 @@ class PayModel
 
     public static function insert($aData)
     {
+        $connect = DB::makeConnection();
+        $ID = 0;
         $sql
             = "INSERT INTO `HoaDon`(`ID`, `IDPhong`, `IDUser`, `infoKhach`, `Option`, `DichVu`, `ThanhToan`, `createDate`) VALUES (null,'" .
-            $aData['IDPhong'] . "','" . $aData['IDUser'] . "','" . $aData['infoKhach'] . "','" . $aData['Option'] . "','" . $aData['DichVu'] .
+            $aData['IDPhong'] . "','" . $aData['IDUser'] . "','" . $aData['infoKhach'] . "','" . $aData['Option'] .
+            "','" . $aData['DichVu'] .
             "','" . $aData['ThanhToan'] . "',null)";
-        return DB::makeConnection()->query($sql);
+        if ($connect->query($sql)) {
+            $ID = $connect->insert_id;
+        }
+        return $ID;
     }
 
     public static function isExist($id): bool
@@ -64,9 +70,9 @@ class PayModel
                 $aData['IDHoaDon'] . "," . $aData['TongTien'] . ",null)");
     }
 
-    public static function getFields($id,$field)
+    public static function getFields($id, $field)
     {
-        $query= DB::makeConnection()->query("SELECT ".$field." FROM HoaDon WHERE ID=".$id."");
-        return (!empty($query))?($query->fetch_assoc())[$field]:'';
+        $query = DB::makeConnection()->query("SELECT " . $field . " FROM HoaDon WHERE ID=" . $id . "");
+        return (!empty($query)) ? ($query->fetch_assoc())[$field] : '';
     }
 }

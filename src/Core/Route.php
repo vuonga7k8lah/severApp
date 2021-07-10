@@ -39,7 +39,8 @@ class Route
     public function direct($uri, $method)
     {
         if (!$controller = $this->routeIsExist($uri, $method)) {
-            echo "404";
+            echo "<p style='text-align: center'>XEM Lại Đường Dẫn URL</p>";
+            echo "<img src='../severApp/assets/IMG/404.jpg' style='text-align: center;display: block;margin-left: auto;margin-right: auto'>";
             die();
         } else {
             $oinit = explode('@', $controller);
