@@ -54,6 +54,20 @@ class PayController
         echo Message::success('list data', $aData);
     }
 
+    public function getOnePay($ID)
+    {
+        if (PayModel::isExist($ID)) {
+            $aDataPay = PayModel::getPayWithID($ID);
+            if ($aDataPay) {
+                echo Message::success('list data', $aDataPay);
+                die();
+            }
+            echo Message::error('sorry, get list data pay error', 401);
+        } else {
+            echo Message::error('sorry,pay not exist', 401);
+        }
+    }
+
     public function registerPay()
     {
         $aData = $_POST;
@@ -62,7 +76,7 @@ class PayController
                 $aUserData = $this->decodeJWT($aData['token']);
                 $aData['IDUser'] = $aUserData->ID;
                 if (!checkIDPhong($aData['IDPhong'])) {
-                    echo Message::error('Phòng không tồn tại', 401);
+                    echo Message::error('Sorry,the room is not exist', 401);
                 }
                 $aInfoKhach = [
                     'Ten'    => $aData['Ten'],
@@ -82,12 +96,12 @@ class PayController
                     RoomsModel::update($aData['IDPhong'], [
                         'TrangThai' => 1
                     ]);
-                    echo Message::success('Create Hóa Đơn Thành Công', ['ID' => $ID]);
+                    echo Message::success('The pay create successfully', ['ID' => $ID]);
                     die();
                 }
-                echo Message::error('Create Hóa Đơn Không Thành Công', 401);
+                echo Message::error('The pay create not successfully', 401);
             } else {
-                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                echo Message::error('Sorry,param is not empty', 401);
             }
         } else {
             echo Message::error('User not access', 401);
@@ -102,15 +116,15 @@ class PayController
                 if (PayModel::isExist($aData['ID'])) {
                     $status = PayModel::delete($aData['ID']);
                     if ($status) {
-                        echo Message::success('Delete Hóa Đơn Thành Công', []);
+                        echo Message::success('The pay delete successfully', []);
                         die();
                     }
-                    echo Message::error('Delete Hóa Đơn Không Thành Công', 401);
+                    echo Message::error('The pay delete not successfully', 401);
                 } else {
-                    echo Message::error('Hóa Đơn Không Tồn Tại', 401);
+                    echo Message::error('Sorry,the pay is not exist', 401);
                 }
             } else {
-                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                echo Message::error('Sorry,param is not empty', 401);
             }
         } else {
             echo Message::error('User not access', 401);
@@ -126,21 +140,21 @@ class PayController
                     $aUserData = $this->decodeJWT($aData['token']);
                     $aData['IDUser'] = $aUserData->ID;
                     if (!checkIDPhong($aData['IDPhong'])) {
-                        echo Message::error('Phòng không tồn tại', 401);
+                        echo Message::error('Sorry,the room is not exist', 401);
                     }
                     $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
                         ($aData['IDPhong'])['Gia']);
                     $status = PayModel::update($aData['ID'], $aData);
                     if ($status) {
-                        echo Message::success('Update Hóa Đơn Thành Công', []);
+                        echo Message::success('The pay update successfully', []);
                         die();
                     }
-                    echo Message::error('Update Hóa Đơn Không Thành Công', 401);
+                    echo Message::error('The pay delete not successfully', 401);
                 } else {
-                    echo Message::error('Hóa Đơn Không Tồn Tại', 401);
+                    echo Message::error('Sorry,param is not empty', 401);
                 }
             } else {
-                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                echo Message::error('Sorry,param is not empty', 401);
             }
         } else {
             echo Message::error('User not access', 401);
@@ -178,12 +192,12 @@ class PayController
                         RoomsModel::update($aData['IDPhong'], [
                             'TrangThai' => 0
                         ]);
-                        echo Message::success("Thanh Toán Thành Công");
+                        echo Message::success("The pay is successful");
                         die();
                     }
-                    echo Message::error("Thanh Toán Không Thành Công", 401);
+                    echo Message::error("The pay is not successful", 401);
                 } else {
-                    echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                    echo Message::error('The param is not empty', 401);
                 }
             } else {
                 echo Message::error('User not access', 401);
@@ -191,8 +205,5 @@ class PayController
         } catch (Exception $exception) {
             echo Message::error($exception->getMessage(), $exception->getCode());
         }
-        ///lấy giờ hiện tại
-//        date_default_timezone_set('Asia/Ho_Chi_Minh');
-//        var_dump(date('m-d-Y h:i:s a', time()));
     }
 }

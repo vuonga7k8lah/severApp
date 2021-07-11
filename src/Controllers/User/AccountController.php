@@ -28,22 +28,25 @@ class AccountController
         }
         echo Message::success('List user', $aUser);
     }
-    public function renewPassword(){
+
+    public function renewPassword()
+    {
         $aData = $_POST;
         if (checkValidateData($aData)) {
             if (strcmp($aData['password'], $aData['cfPassword']) == 0) {
                 $oInfo = $this->decodeJWT($aData['token']);
-                UserModel::update($oInfo->ID,[
-                    'password'=>md5($aData['password'])
+                UserModel::update($oInfo->ID, [
+                    'password' => md5($aData['password'])
                 ]);
-                echo Message::success('Password Bạn Được Cập Nhật Thành Công');
+                echo Message::success('Your password has been changed successfully');
             } else {
-                echo Message::error('Password Bạn Nhập Đã Không Khớp Nhau', 401);
+                echo Message::error('your passwords must match', 401);
             }
         } else {
-            echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+            echo Message::error('The param is not empty', 401);
         }
     }
+
     public function verifyPassword()
     {
         $aData = $_POST;
@@ -51,12 +54,12 @@ class AccountController
             $oInfo = $this->decodeJWT($aData['token']);
             $status = UserModel::checkPasswordExist($oInfo->ID, md5($aData['password']));
             if ($status) {
-                echo Message::success('Password Bạn Nhập Đúng');
+                echo Message::success('Congratulations,your password success');
             } else {
-                echo Message::error('Password Bạn Nhập Đã Sai', 401);
+                echo Message::error('Sorry,the password is error', 401);
             }
         } else {
-            echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+            echo Message::error('The param is not empty', 401);
         }
     }
 
@@ -79,13 +82,13 @@ class AccountController
                         'HoTen'    => $aData['HoTen']
                     ]);
                     UserModel::updateToken($userID, $token);
-                    echo Message::success('Tài Khoản Tạo Thành Công');
+                    echo Message::success('The account create successfully');
                 }
             } else {
                 echo Message::error('User not access', 401);
             }
         } else {
-            echo Message::error('Tài Khoản Đã Tồn Tại', 401);
+            echo Message::error('Sorry,the account is exist', 401);
         }
     }
 
@@ -96,12 +99,12 @@ class AccountController
             if (checkValidateData($aData)) {
                 $status = UserModel::update($aData['ID'], $aData);
                 if ($status) {
-                    echo Message::success('Tài Khoản Update Thành Công');
+                    echo Message::success('The account is update successfully');
                 } else {
-                    echo Message::error('Tài Khoản Update Không Thành Công', 401);
+                    echo Message::error('The account is update not successfully', 401);
                 }
             } else {
-                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                echo Message::error('The param is not null', 401);
             }
         } else {
             echo Message::error('User not access', 401);
@@ -115,12 +118,12 @@ class AccountController
             if (checkValidateData($aData)) {
                 $status = UserModel::delete($aData['ID']);
                 if ($status) {
-                    echo Message::success('Tài Khoản Delete Thành Công');
+                    echo Message::success('The account is delete successfully');
                 } else {
-                    echo Message::error('Tài Khoản Delete Không Thành Công', 401);
+                    echo Message::error('The account is delete not successfully', 401);
                 }
             } else {
-                echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+                echo Message::error('The param is not null', 401);
             }
         } else {
             echo Message::error('User not access', 401);
@@ -133,14 +136,14 @@ class AccountController
         if (checkValidateData($aData)) {
             $ID = UserModel::handleLogin($aData);
             if ($ID) {
-                echo Message::success('Tài Khoản Login Thành Công', [
+                echo Message::success('Congratulations, The account login successfully', [
                     'token' => UserModel::getTokenWithUserID($ID)
                 ]);
             } else {
-                echo Message::error('Tài Khoản Login Không Thành Công', 401);
+                echo Message::error('Sorry, The account login successfully', 401);
             }
         } else {
-            echo Message::error('Tham Số Truyền Lên Không Được Rỗng', 401);
+            echo Message::error('The param is not null', 401);
         }
     }
 }

@@ -27,7 +27,6 @@ class PayModel
         }
         return $ID;
     }
-
     public static function isExist($id): bool
     {
         return !empty(self::getPayWithID($id));

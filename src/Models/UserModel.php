@@ -87,7 +87,7 @@ class UserModel
             DB::makeConnection()->real_escape_string($aData['username']) . "' AND password='"
             . DB::makeConnection()->real_escape_string(md5($aData['password'])) . "'";
         $status = DB::makeConnection()->query($sql);
-        return (!empty($status)) ? ($status->fetch_assoc())['ID'] : $status;
+        return (!empty($status->num_rows)) ? ($status->fetch_assoc())['ID'] : false;
     }
 
     public static function getTokenWithUserID($userID): string

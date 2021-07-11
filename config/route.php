@@ -86,6 +86,11 @@ $aRoute->post('deleteServices', 'severApp\Controllers\Service\ServiceController@
  * }
  */
 $aRoute->get('pays', 'severApp\Controllers\Pay\PayController@getAllPay');
+
+//Lấy Thông Tin hóa đơn endpoin: http://127.0.0.1/severApp/pays/12 với 12 là ID hóa đơn
+$aRoute->get('pays/', 'severApp\Controllers\Pay\PayController@getOnePay');
+
+
 $aRoute->post('createPay', 'severApp\Controllers\Pay\PayController@registerPay');
 $aRoute->post('updatePay', 'severApp\Controllers\Pay\PayController@updatePay');
 $aRoute->post('deletePay', 'severApp\Controllers\Pay\PayController@deletePay');

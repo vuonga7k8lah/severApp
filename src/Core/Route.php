@@ -6,7 +6,7 @@ namespace severApp\Core;
 
 class Route
 {
-    private static $_sefl = null;
+    private static $_sefl  = null;
     private static $aRoute = null;
 
     public static function Load($route)
@@ -28,14 +28,17 @@ class Route
     {
         self::$aRoute['POST'][$uri] = $controller;
     }
+
     public static function put($uri, $controller)
     {
         self::$aRoute['PUT'][$uri] = $controller;
     }
+
     public static function delete($uri, $controller)
     {
         self::$aRoute['DELETE'][$uri] = $controller;
     }
+
     public function direct($uri, $method)
     {
         if (!$controller = $this->routeIsExist($uri, $method)) {
@@ -44,7 +47,7 @@ class Route
             die();
         } else {
             $oinit = explode('@', $controller);
-            $this->callRoute($oinit[0],$oinit[1]);
+            $this->callRoute($oinit[0], $oinit[1]);
         }
     }
 
@@ -53,9 +56,21 @@ class Route
         return array_key_exists($uri, self::$aRoute[$method]) ? self::$aRoute[$method][$uri] : false;
     }
 
-    public function callRoute($controller, $method,$para=[])
+    public function callRoute($controller, $method, $para = [])
     {
-        $oInit= new $controller;
-        call_user_func_array([$oInit,$method],$para);
+        $oInit = new $controller;
+        call_user_func_array([$oInit, $method], $para);
+    }
+
+    public function directGet($aURI,$method)
+    {
+        if (!$controller = $this->routeIsExist($aURI[0].'/', $method)) {
+            echo "<p style='text-align: center'>XEM Lại Đường Dẫn URL</p>";
+            echo "<img src='../severApp/assets/IMG/404.jpg' style='text-align: center;display: block;margin-left: auto;margin-right: auto'>";
+            die();
+        } else {
+            $oinit = explode('@', $controller);
+            $this->callRoute($oinit[0], $oinit[1],[$aURI[1]]);
+        }
     }
 }
