@@ -58,8 +58,10 @@ class PayController
     {
         if (PayModel::isExist($ID)) {
             $aDataPay = PayModel::getPayWithID($ID);
+            $aData = $aDataPay;
+            $aData['infoKhach'] = json_decode($aDataPay['infoKhach'], true);
             if ($aDataPay) {
-                echo Message::success('list data', $aDataPay);
+                echo Message::success('list data', $aData);
                 die();
             }
             echo Message::error('sorry, get list data pay error', 401);
