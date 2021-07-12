@@ -140,7 +140,7 @@ class AccountController
                     'token' => UserModel::getTokenWithUserID($ID)
                 ]);
             } else {
-                echo Message::error('Sorry, The account login successfully', 401);
+                echo Message::error('Sorry, The account login error', 401);
             }
         } else {
             echo Message::error('The param is not null', 401);
