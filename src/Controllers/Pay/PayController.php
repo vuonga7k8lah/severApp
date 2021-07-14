@@ -139,13 +139,11 @@ class PayController
         if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
             if (checkValidateData($aData)) {
                 if (PayModel::isExist($aData['ID'])) {
+                    $IDPhong=PayModel::getFields($aData['ID'],'IDPhong');
                     $aUserData = $this->decodeJWT($aData['token']);
                     $aData['IDUser'] = $aUserData->ID;
-                    if (!checkIDPhong($aData['IDPhong'])) {
-                        echo Message::error('Sorry,the room is not exist', 401);
-                    }
                     $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
-                        ($aData['IDPhong'])['Gia']);
+                        ($IDPhong)['Gia']);
                     $status = PayModel::update($aData['ID'], $aData);
                     if ($status) {
                         echo Message::success('The pay update successfully', []);

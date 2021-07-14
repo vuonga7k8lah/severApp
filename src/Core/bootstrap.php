@@ -6,6 +6,7 @@ use severApp\Core\Route;
 
 require_once 'vendor/autoload.php';
 require_once 'src/Helpers/function.php';
+error_reporting(0);
 App::bind('config/app',require_once 'config/app.php');
 
 if (Request::method()=='GET'){
