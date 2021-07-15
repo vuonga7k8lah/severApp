@@ -45,7 +45,7 @@ class PayModel
             $query[] = " IDUser ='" . $aData['IDUser'] . "'";
         }
         if ($aData['ThanhToan'] ?? '') {
-            $query [] = " ThanhToan ='" . $aData['ThanhToan'] . "'";
+            $query [] = " ThanhToan = " . $aData['ThanhToan'] ;
         }
         if ($aData['IDPhong'] ?? '') {
             $query [] = " IDPhong = '" . $aData['IDPhong'] . "'";
@@ -54,7 +54,8 @@ class PayModel
             $query [] = " DichVu = '" . $aData['DichVu'] . "'";
         }
         $query = array_merge($query, [" createDate = null"]);
-        return DB::makeConnection()->query("UPDATE `HoaDon` SET " . implode(',', $query) . " WHERE ID='" . $id . "'");
+        $sql="UPDATE `HoaDon` SET " . implode(',', $query) . " WHERE ID='" . $id . "'";
+        return DB::makeConnection()->query($sql);
     }
 
     public static function delete($id)

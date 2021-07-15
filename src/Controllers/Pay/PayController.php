@@ -139,17 +139,19 @@ class PayController
         if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
             if (checkValidateData($aData)) {
                 if (PayModel::isExist($aData['ID'])) {
-                    $IDPhong=PayModel::getFields($aData['ID'],'IDPhong');
+                    $IDPhong = PayModel::getFields($aData['ID'], 'IDPhong');
                     $aUserData = $this->decodeJWT($aData['token']);
                     $aData['IDUser'] = $aUserData->ID;
-                    $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
-                        ($IDPhong)['Gia']);
+                    if (!isset($aData['ThanhToan'])) {
+                        $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
+                            ($IDPhong)['Gia']);
+                    }
                     $status = PayModel::update($aData['ID'], $aData);
                     if ($status) {
                         echo Message::success('The pay update successfully', []);
                         die();
                     }
-                    echo Message::error('The pay delete not successfully', 401);
+                    echo Message::error('The pay update not successfully', 401);
                 } else {
                     echo Message::error('Sorry,param is not empty', 401);
                 }
