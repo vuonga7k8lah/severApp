@@ -11,7 +11,7 @@ class AccountController
 {
     use TrainJWT;
 
-    public static function getAllUser()
+    public function getAllUser()
     {
         $aUser = [];
         $aData = UserModel::getAllUser();
