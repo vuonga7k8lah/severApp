@@ -67,3 +67,20 @@ function handlePays($idDichVu): int
     }
     return $gia;
 }
+
+/**
+ * @throws Exception
+ */
+function checkDataIsset($defineData,$aRawData):bool
+{
+    $aKeyRawData=array_keys($aRawData);
+    foreach ($defineData as $data){
+        if (!in_array($data,$aKeyRawData)){
+            $aError[]=$data;
+        }
+    }
+    if (isset($aError) || !empty($aError)){
+        throw new Exception(sprintf("Sorry, The params %s is required",implode(',',$aError)),400);
+    }
+    return true;
+}

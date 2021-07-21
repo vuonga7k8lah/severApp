@@ -19,11 +19,17 @@ $aRoute->get('products', 'severApp\Controllers\Product\ProductController@getProd
  * cần bắn lên
  * token
  * password cũ
+ * //forgot password
+ * bắn email lên để check nếu đúng chuyển trang trả về userID là ID
+ * --Tiếp tục:
+ * bắn lên code,id(là userID),password mới
  */
 $aRoute->get('users', 'severApp\Controllers\User\AccountController@getAllUser');
 $aRoute->post('createUsers', 'severApp\Controllers\User\AccountController@registerUser');
 $aRoute->post('updateUsers', 'severApp\Controllers\User\AccountController@updateUser');
 $aRoute->post('deleteUsers', 'severApp\Controllers\User\AccountController@deleteUser');
+$aRoute->post('sendEmail', 'severApp\Controllers\User\AccountController@sendEmail');
+$aRoute->post('verifyCode', 'severApp\Controllers\User\AccountController@verifyCode');
 $aRoute->post('renewPassword', 'severApp\Controllers\User\AccountController@renewPassword');
 $aRoute->post('verifyPassword', 'severApp\Controllers\User\AccountController@verifyPassword');
 $aRoute->post('login', 'severApp\Controllers\User\AccountController@handleLogin');

@@ -2,11 +2,11 @@
 
 namespace Firebase\JWT;
 
-use \DomainException;
-use \InvalidArgumentException;
-use \UnexpectedValueException;
-use \DateTime;
+use DomainException;
 use Exception;
+use InvalidArgumentException;
+use UnexpectedValueException;
+use DateTime;
 
 /**
  * JSON Web Token implementation, based on this spec:
@@ -43,6 +43,7 @@ class JWT
     public static $timestamp = null;
 
     public static $supported_algs = array(
+        'ES384' => array('openssl', 'SHA384'),
         'ES256' => array('openssl', 'SHA256'),
         'HS256' => array('hash_hmac', 'SHA256'),
         'HS384' => array('hash_hmac', 'SHA384'),
@@ -50,6 +51,7 @@ class JWT
         'RS256' => array('openssl', 'SHA256'),
         'RS384' => array('openssl', 'SHA384'),
         'RS512' => array('openssl', 'SHA512'),
+        'EdDSA' => array('sodium_crypto', 'EdDSA'),
     );
 
     /**
@@ -59,10 +61,12 @@ class JWT
      * @param string|array|resource     $key            The key, or map of keys.
      *                                                  If the algorithm used is asymmetric, this is the public key
      * @param array                     $allowed_algs   List of supported verification algorithms
-     *                                                  Supported algorithms are 'ES256', 'HS256', 'HS384', 'HS512', 'RS256', 'RS384', and 'RS512'
+     *                                                  Supported algorithms are 'ES384','ES256', 'HS256', 'HS384',
+     *                                                  'HS512', 'RS256', 'RS384', and 'RS512'
      *
      * @return object The JWT's payload as a PHP object
      *
+     * @throws InvalidArgumentException     Provided JWT was empty
      * @throws UnexpectedValueException     Provided JWT was invalid
      * @throws SignatureInvalidException    Provided JWT was invalid because the signature verification failed
      * @throws BeforeValidException         Provided JWT is trying to be used before it's eligible as defined by 'nbf'
@@ -77,72 +81,72 @@ class JWT
         $timestamp = \is_null(static::$timestamp) ? \time() : static::$timestamp;
 
         if (empty($key)) {
-            throw new Exception('Key may not be empty');
+            throw new InvalidArgumentException('Key may not be empty');
         }
         $tks = \explode('.', $jwt);
         if (\count($tks) != 3) {
-            throw new Exception('Wrong number of segments');
+            throw new UnexpectedValueException('Wrong number of segments');
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            throw new Exception('Invalid header encoding');
+            throw new UnexpectedValueException('Invalid header encoding');
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            throw new Exception('Invalid claims encoding');
+            throw new UnexpectedValueException('Invalid claims encoding');
         }
         if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
-            throw new Exception('Invalid signature encoding');
+            throw new UnexpectedValueException('Invalid signature encoding');
         }
         if (empty($header->alg)) {
-            throw new Exception('Empty algorithm');
+            throw new UnexpectedValueException('Empty algorithm');
         }
         if (empty(static::$supported_algs[$header->alg])) {
-            throw new Exception('Algorithm not supported');
+            throw new UnexpectedValueException('Algorithm not supported');
         }
         if (!\in_array($header->alg, $allowed_algs)) {
-            throw new Exception('Algorithm not allowed');
+            throw new UnexpectedValueException('Algorithm not allowed');
         }
-        if ($header->alg === 'ES256') {
-            // OpenSSL expects an ASN.1 DER sequence for ES256 signatures
+        if ($header->alg === 'ES256' || $header->alg === 'ES384') {
+            // OpenSSL expects an ASN.1 DER sequence for ES256/ES384 signatures
             $sig = self::signatureToDER($sig);
         }
 
         if (\is_array($key) || $key instanceof \ArrayAccess) {
             if (isset($header->kid)) {
                 if (!isset($key[$header->kid])) {
-                    throw new Exception('"kid" invalid, unable to lookup correct key');
+                    throw new UnexpectedValueException('"kid" invalid, unable to lookup correct key');
                 }
                 $key = $key[$header->kid];
             } else {
-                throw new Exception('"kid" empty, unable to lookup correct key');
+                throw new UnexpectedValueException('"kid" empty, unable to lookup correct key');
             }
         }
 
         // Check the signature
         if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
-            throw new Exception('Signature verification failed');
+            throw new SignatureInvalidException('Signature verification failed');
         }
 
         // Check the nbf if it is defined. This is the time that the
-        // Token can actually be used. If it's not yet that time, abort.
+        // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
             throw new BeforeValidException(
-                'Cannot handle Token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
+                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
             );
         }
 
-        // Check that this Token has been created before 'now'. This prevents
+        // Check that this token has been created before 'now'. This prevents
         // using tokens that have been created for later use (and haven't
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
             throw new BeforeValidException(
-                'Cannot handle Token prior to ' . \date(DateTime::ISO8601, $payload->iat)
+                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->iat)
             );
         }
 
-        // Check if this Token has expired.
+        // Check if this token has expired.
         if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
-            throw new Exception('Expired Token');
+            throw new ExpiredException('Expired token');
         }
 
         return $payload;
@@ -151,13 +155,14 @@ class JWT
     /**
      * Converts and signs a PHP object or array into a JWT string.
      *
-     * @param object|array  $payload    PHP object or array
-     * @param string        $key        The secret key.
-     *                                  If the algorithm used is asymmetric, this is the private key
-     * @param string        $alg        The signing algorithm.
-     *                                  Supported algorithms are 'ES256', 'HS256', 'HS384', 'HS512', 'RS256', 'RS384', and 'RS512'
-     * @param mixed         $keyId
-     * @param array         $head       An array with header elements to attach
+     * @param object|array      $payload    PHP object or array
+     * @param string|resource   $key        The secret key.
+     *                                      If the algorithm used is asymmetric, this is the private key
+     * @param string            $alg        The signing algorithm.
+     *                                      Supported algorithms are 'ES384','ES256', 'HS256', 'HS384',
+     *                                      'HS512', 'RS256', 'RS384', and 'RS512'
+     * @param mixed             $keyId
+     * @param array             $head       An array with header elements to attach
      *
      * @return string A signed JWT
      *
@@ -190,11 +195,12 @@ class JWT
      * @param string            $msg    The message to sign
      * @param string|resource   $key    The secret key
      * @param string            $alg    The signing algorithm.
-     *                                  Supported algorithms are 'ES256', 'HS256', 'HS384', 'HS512', 'RS256', 'RS384', and 'RS512'
+     *                                  Supported algorithms are 'ES384','ES256', 'HS256', 'HS384',
+     *                                  'HS512', 'RS256', 'RS384', and 'RS512'
      *
      * @return string An encrypted message
      *
-     * @throws DomainException Unsupported algorithm was specified
+     * @throws DomainException Unsupported algorithm or bad key was specified
      */
     public static function sign($msg, $key, $alg = 'HS256')
     {
@@ -210,11 +216,24 @@ class JWT
                 $success = \openssl_sign($msg, $signature, $key, $algorithm);
                 if (!$success) {
                     throw new DomainException("OpenSSL unable to sign data");
-                } else {
-                    if ($alg === 'ES256') {
-                        $signature = self::signatureFromDER($signature, 256);
-                    }
-                    return $signature;
+                }
+                if ($alg === 'ES256') {
+                    $signature = self::signatureFromDER($signature, 256);
+                } elseif ($alg === 'ES384') {
+                    $signature = self::signatureFromDER($signature, 384);
+                }
+                return $signature;
+            case 'sodium_crypto':
+                if (!function_exists('sodium_crypto_sign_detached')) {
+                    throw new DomainException('libsodium is not available');
+                }
+                try {
+                    // The last non-empty line is used as the key.
+                    $lines = array_filter(explode("\n", $key));
+                    $key = base64_decode(end($lines));
+                    return sodium_crypto_sign_detached($msg, $key);
+                } catch (Exception $e) {
+                    throw new DomainException($e->getMessage(), 0, $e);
                 }
         }
     }
@@ -230,7 +249,7 @@ class JWT
      *
      * @return bool
      *
-     * @throws DomainException Invalid Algorithm or OpenSSL failure
+     * @throws DomainException Invalid Algorithm, bad key, or OpenSSL failure
      */
     private static function verify($msg, $signature, $key, $alg)
     {
@@ -251,6 +270,18 @@ class JWT
                 throw new DomainException(
                     'OpenSSL error: ' . \openssl_error_string()
                 );
+            case 'sodium_crypto':
+              if (!function_exists('sodium_crypto_sign_verify_detached')) {
+                  throw new DomainException('libsodium is not available');
+              }
+              try {
+                  // The last non-empty line is used as the key.
+                  $lines = array_filter(explode("\n", $key));
+                  $key = base64_decode(end($lines));
+                  return sodium_crypto_sign_verify_detached($signature, $msg, $key);
+              } catch (Exception $e) {
+                  throw new DomainException($e->getMessage(), 0, $e);
+              }
             case 'hash_hmac':
             default:
                 $hash = \hash_hmac($algorithm, $msg, $key, true);

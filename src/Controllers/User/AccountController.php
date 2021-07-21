@@ -3,12 +3,15 @@
 
 namespace severApp\Controllers\User;
 
+use Exception;
+use severApp\Controllers\Sendinblue\SendinblueController;
 use severApp\Core\TrainJWT;
 use severApp\Helpers\Message;
 use severApp\Models\UserModel;
 
 class AccountController
 {
+
     use TrainJWT;
 
     public function getAllUser()
@@ -144,6 +147,60 @@ class AccountController
             }
         } else {
             echo Message::error('The param is not null', 401);
+        }
+    }
+
+    public function sendEmail()
+    {
+        $aData = $_POST;
+        try {
+            checkDataIsset(['email'], $aData);
+            if (empty($aData['email'])) {
+                throw new Exception('The Email is not null');
+            }
+            if (!UserModel::isEmailExist($aData['email'])) {
+                throw new Exception('Sorry,The Email is not exist in database');
+            }
+            $code = uniqid('vuongKMA_');
+            $ID = UserModel::getIDWithEmail($aData['email']);
+            $aUser = UserModel::getUserWithID($ID);
+            UserModel::update($ID, [
+                'code' => $code
+            ]);
+            $status = (new SendinblueController())
+                ->setReceiver($aData['email'], $aUser['userName'])
+                ->setUsername($aUser['userName'])
+                ->setCode($code)
+                ->sendMail();
+            if ($status) {
+                echo Message::success('send email successfully', [
+                    'id' => $ID
+                ]);
+            }
+        } catch (Exception $exception) {
+            echo Message::error($exception->getMessage(), $exception->getCode());
+        }
+    }
+
+    public function verifyCode()
+    {
+        $aData = $_POST;
+        try {
+            checkDataIsset(['code', 'password', 'id'], $aData);
+            if (empty($aData['code']) || empty($aData['id']) || empty($aData['password']))
+            {
+                throw new Exception('the param is not empty',400);
+            }
+            if (UserModel::checkCodeRenewPassword($aData['id'], $aData['code'])) {
+                $password = md5($aData['password']);
+                UserModel::update($aData['id'], [
+                    'password' => $password
+                ]);
+                echo Message::success('congratulations, the password renew successfully'); die();
+            }
+            throw new Exception('sorry,we couldn\'t find code is not exist',400);
+        } catch (Exception $exception) {
+            echo Message::error($exception->getMessage(), $exception->getCode());
         }
     }
 }

@@ -8,9 +8,20 @@ use severApp\Database\DB;
 
 class UserModel
 {
-    public static function isUserExist($userName)
+    public static function getUserWithID($id): array
     {
-        return !empty(self::getID($userName)) ? true : false;
+        return DB::makeConnection()->query("SELECT * FROM users WHERE ID='" . $id . "'")->fetch_assoc();
+    }
+
+    public static function checkCodeRenewPassword($id,$code):bool
+    {
+        $result = DB::makeConnection()->query("SELECT ID FROM users WHERE code='" . $code . "' AND ID='".$id."'");
+        return !empty($result->num_rows);
+    }
+
+    public static function isUserExist($userName): bool
+    {
+        return !empty(self::getID($userName));
     }
 
     public static function getID($userName)
@@ -19,7 +30,18 @@ class UserModel
         return (!empty($ID)) ? $ID['ID'] : 0;
     }
 
-    public static function isUserAdmin($userName):bool
+    public static function isEmailExist($email): bool
+    {
+        return !empty(self::getIDWithEmail($email));
+    }
+
+    public static function getIDWithEmail($email): int
+    {
+        $result = DB::makeConnection()->query("SELECT ID FROM users WHERE email='" . $email . "'");
+        return ($result->num_rows > 0) ? ($result->fetch_assoc())['ID'] : 0;
+    }
+
+    public static function isUserAdmin($userName): bool
     {
         $query = DB::makeConnection()->query("SELECT * FROM users WHERE userName='" . $userName . "' AND level=2 ")
             ->fetch_assoc();
@@ -68,6 +90,12 @@ class UserModel
         if ($aData['DiaChi'] ?? '') {
             $query [] = " DiaChi = '" . $aData['DiaChi'] . "'";
         }
+        if ($aData['email'] ?? '') {
+            $query [] = " Email = '" . $aData['email'] . "'";
+        }
+        if ($aData['code'] ?? '') {
+            $query [] = " code = '" . $aData['code'] . "'";
+        }
         if ($aData['role'] ?? '') {
             $query [] = " level = '" . $aData['role'] . "'";
         }
@@ -96,9 +124,10 @@ class UserModel
         return $data['token'];
     }
 
-    public static function checkPasswordExist($userID,$password): bool
+    public static function checkPasswordExist($userID, $password): bool
     {
-        $query = DB::makeConnection()->query("SELECT ID FROM users WHERE ID='" . $userID . "' AND password='" . $password . "'")
+        $query = DB::makeConnection()->query("SELECT ID FROM users WHERE ID='" . $userID . "' AND password='" .
+            $password . "'")
             ->fetch_assoc();
         return !empty($query) ? true : false;
     }
