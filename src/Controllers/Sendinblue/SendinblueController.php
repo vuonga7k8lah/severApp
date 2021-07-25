@@ -66,13 +66,14 @@ class SendinblueController
         $aData['subject'] = 'Hello, You can reset password';
         $aData['to'] = $this->aReceiver;
         $aData['htmlContent'] = sprintf('<html>
-                    <head>Peaceful Hotel</head>
+                    <head><h1>Peaceful Hotel<h1></head>
                                     <body>
-                                    <p>Username: %s</p>
-                                    <p>If this was a mistake, just ignore this email and nothing will happen.To reset your password,code %s</p>
+                                    <h2>Username: %s</h2>
+                                    <p>If this was a mistake, just ignore this email and nothing will happen.To reset your password,
+                                    code: <h1> %s </h1></p>
                                     </body>
-                    </html>', $this->username, $this->code);
-        //var_dump($headers);die();
+                                    </div>
+                    </html>',$this->username, $this->code);
         $curl = curl_init();
         $jData = json_encode($aData);
       ///  header("Content-Type: application/json; charset=UTF-8");
