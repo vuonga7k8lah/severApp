@@ -74,37 +74,65 @@ class PayController
     {
         $aData = $_POST;
         if ($this->verifyToken($aData['token']) || $this->verifyToken($aData['token'], true)) {
-            if (checkValidateData($aData)) {
-                $aUserData = $this->decodeJWT($aData['token']);
-                $aData['IDUser'] = $aUserData->ID;
-                if (!checkIDPhong($aData['IDPhong'])) {
-                    echo Message::error('Sorry,the room is not exist', 401);
-                }
-                $aInfoKhach = [
-                    'Ten'    => $aData['Ten'],
-                    'CMT'    => $aData['CMT'],
-                    'SDT'    => $aData['SDT'],
-                    'DiaChi' => $aData['DiaChi']
-                ];
-                $aData['infoKhach'] = json_encode($aInfoKhach);
-                if ($aData['Option'] === 'TheoPhong') {
-                    $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
-                        ($aData['IDPhong'])['Gia']);
-                } else {
-                    $aData['ThanhToan'] = (int)handlePays($aData['DichVu']);
-                }
-                $ID = PayModel::insert($aData);
-                if ($ID) {
-                    RoomsModel::update($aData['IDPhong'], [
-                        'TrangThai' => 1
-                    ]);
-                    echo Message::success('The pay create successfully', ['ID' => $ID]);
-                    die();
-                }
-                echo Message::error('The pay create not successfully', 401);
-            } else {
-                echo Message::error('Sorry,param is not empty', 401);
-            }
+           if (isset($aData['qrcode'])&& !empty($aData['qrcode'])){
+               $aUserData = $this->decodeJWT($aData['token']);
+               $aData['IDUser'] = $aUserData->ID;
+               $aInfo=json_decode($this->decodeJWT($aData['qrcode']),true);
+               unset($aData['token']);
+               unset($aData['qrcode']);
+               $aInfoKhach = [
+                   'Ten'    => $aInfo['hoTen'],
+                   'CMT'    => '',
+                   'SDT'    => $aInfo['sdt'],
+                   'DiaChi' => ''
+               ];
+               $aData['infoKhach'] = json_encode($aInfoKhach);
+               $aData['IDPhong'] = rand(0,RoomsModel::getAllIDs());
+               $aData['ThanhToan']=$aInfo['gia'];
+               $aData['Option']='TheoPhong';
+               $aData['DichVu']=1;
+               $ID = PayModel::insert($aData);
+               if ($ID) {
+                   RoomsModel::update($aData['IDPhong'], [
+                       'TrangThai' => 1
+                   ]);
+                   echo Message::success('The pay create successfully', ['ID' => $ID]);
+                   die();
+               }
+               echo Message::error('The pay create not successfully', 401);
+           }else{
+               if (checkValidateData($aData)) {
+                   $aUserData = $this->decodeJWT($aData['token']);
+                   $aData['IDUser'] = $aUserData->ID;
+                   if (!checkIDPhong($aData['IDPhong'])) {
+                       echo Message::error('Sorry,the room is not exist', 401);
+                   }
+                   $aInfoKhach = [
+                       'Ten'    => $aData['Ten'],
+                       'CMT'    => $aData['CMT'],
+                       'SDT'    => $aData['SDT'],
+                       'DiaChi' => $aData['DiaChi']
+                   ];
+                   $aData['infoKhach'] = json_encode($aInfoKhach);
+                   if ($aData['Option'] === 'TheoPhong') {
+                       $aData['ThanhToan'] = (int)handlePays($aData['DichVu']) + (int)(RoomsModel::getRoom
+                           ($aData['IDPhong'])['Gia']);
+                   } else {
+                       $aData['ThanhToan'] = (int)handlePays($aData['DichVu']);
+                   }
+                   $ID = PayModel::insert($aData);
+                   if ($ID) {
+                       RoomsModel::update($aData['IDPhong'], [
+                           'TrangThai' => 1
+                       ]);
+                       echo Message::success('The pay create successfully', ['ID' => $ID]);
+                       die();
+                   }
+                   echo Message::error('The pay create not successfully', 401);
+               } else {
+                   echo Message::error('Sorry,param is not empty', 401);
+               }
+           }
         } else {
             echo Message::error('User not access', 401);
         }

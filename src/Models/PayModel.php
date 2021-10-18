@@ -27,6 +27,20 @@ class PayModel
         }
         return $ID;
     }
+    public static function insertOrderBooking($aData)
+    {
+        $connect = DB::makeConnection();
+        $ID = 0;
+        $sql
+            = "INSERT INTO `HoaDon`(`ID`, `IDPhong`, `IDUser`, `infoKhach`, `Option`, `DichVu`, `ThanhToan`, `createDate`) VALUES (null,'" .
+            $aData['IDPhong'] . "','" . $aData['IDUser'] . "','" . $aData['infoKhach'] . "','" . $aData['Option'] .
+            "','" . $aData['DichVu'] .
+            "','" . $aData['ThanhToan'] . "',".$aData['createDate'].")";
+        if ($connect->query($sql)) {
+            $ID = $connect->insert_id;
+        }
+        return $ID;
+    }
     public static function isExist($id): bool
     {
         return !empty(self::getPayWithID($id));

@@ -3,8 +3,8 @@
 
 namespace severApp\Core;
 
+use Exception;
 use Firebase\JWT\JWT;
-use mysql_xdevapi\Exception;
 use severApp\Models\UserModel;
 
 trait TrainJWT
@@ -25,7 +25,7 @@ trait TrainJWT
         }
     }
 
-    public function decodeJWT($token): object
+    public function decodeJWT($token)
     {
         try {
             return JWT::decode($token, $this->key, ['HS256']);

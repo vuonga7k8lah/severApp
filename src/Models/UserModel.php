@@ -13,9 +13,9 @@ class UserModel
         return DB::makeConnection()->query("SELECT * FROM users WHERE ID='" . $id . "'")->fetch_assoc();
     }
 
-    public static function checkCodeRenewPassword($id,$code):bool
+    public static function checkCodeRenewPassword($id, $code): bool
     {
-        $result = DB::makeConnection()->query("SELECT ID FROM users WHERE code='" . $code . "' AND ID='".$id."'");
+        $result = DB::makeConnection()->query("SELECT ID FROM users WHERE code='" . $code . "' AND ID='" . $id . "'");
         return !empty($result->num_rows);
     }
 
@@ -51,9 +51,9 @@ class UserModel
     public static function insert($aData)
     {
         $sql
-            = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`, `createDate`) VALUES (null,'" .
+            = "INSERT INTO `users`(`ID`, `HoTen`, `userName`, `password`, `NgaySinh`, `CMT`, `DiaChi`, `level`, `token`,`email`, `code`, `createDate`) VALUES (null,'" .
             $aData['HoTen'] . "','" . $aData['username'] . "','" . $aData['password'] . "','" . $aData['NgaySinh'] .
-            "'," . $aData['CMT'] . ",'" . $aData['DiaChi'] . "',1,'',null)";
+            "'," . $aData['CMT'] . ",'" . $aData['DiaChi'] . "',1,'','" . $aData['email'] . "','',null)";
         $insert = DB::makeConnection()
             ->query($sql);
         if ($insert) {
@@ -91,7 +91,7 @@ class UserModel
             $query [] = " DiaChi = '" . $aData['DiaChi'] . "'";
         }
         if ($aData['email'] ?? '') {
-            $query [] = " Email = '" . $aData['email'] . "'";
+            $query [] = " email = '" . $aData['email'] . "'";
         }
         if ($aData['code'] ?? '') {
             $query [] = " code = '" . $aData['code'] . "'";

@@ -119,3 +119,6 @@ $aRoute->post('checkoutPay', 'severApp\Controllers\Pay\PayController@checkoutPay
  */
 $aRoute->post('statisticPay', 'severApp\Controllers\Statistic\PaysStatisticController@handleStatisticPay');
 
+////Shop
+$aRoute->get('', 'severApp\Controllers\Shop\Home\HomeController@getView');
+$aRoute->get('page404', 'severApp\Controllers\Shop\Page404\Page404Controller@getView');

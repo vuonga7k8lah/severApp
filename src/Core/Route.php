@@ -42,9 +42,7 @@ class Route
     public function direct($uri, $method)
     {
         if (!$controller = $this->routeIsExist($uri, $method)) {
-            echo "<p style='text-align: center'>XEM Lại Đường Dẫn URL</p>";
-            echo "<img src='../severApp/assets/IMG/404.jpg' style='text-align: center;display: block;margin-left: auto;margin-right: auto'>";
-            die();
+            $this->callRoute('severApp\Controllers\Shop\Page404\Page404Controller', 'getView');
         } else {
             $oinit = explode('@', $controller);
             $this->callRoute($oinit[0], $oinit[1]);
@@ -62,15 +60,13 @@ class Route
         call_user_func_array([$oInit, $method], $para);
     }
 
-    public function directGet($aURI,$method)
+    public function directGet($aURI, $method)
     {
-        if (!$controller = $this->routeIsExist($aURI[0].'/', $method)) {
-            echo "<p style='text-align: center'>XEM Lại Đường Dẫn URL</p>";
-            echo "<img src='../severApp/assets/IMG/404.jpg' style='text-align: center;display: block;margin-left: auto;margin-right: auto'>";
-            die();
+        if (!$controller = $this->routeIsExist($aURI[0] . '/', $method)) {
+            $this->callRoute('severApp\Controllers\Shop\Page404\Page404Controller', 'getView');
         } else {
             $oinit = explode('@', $controller);
-            $this->callRoute($oinit[0], $oinit[1],[$aURI[1]]);
+            $this->callRoute($oinit[0], $oinit[1], [$aURI[1]]);
         }
     }
 }
